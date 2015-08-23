@@ -11,13 +11,33 @@ var Header = React.createClass({
   }
 })
 
+var PokemonInfo = React.createClass({
+  render: function() {
+    return(
+      <div>
+        <p>Name: {this.props.pokemon}</p>
+        <p>Species: {this.props.species}</p>
+        <p>Type 1: {this.props.type1}</p>
+        <p>Type 2: {this.props.type2}</p>
+      </div>
+    )
+  }
+})
+
 var Pokemon = React.createClass({
 
   incrementCount: function(pokemon) {
-    this.setState({
-      index: this.state.index + 1,
-    })
-    console.log(this.state.index)
+    request
+      .get('http://pokeapi.co/api/v1/pokemon/' + (this.state.index +1))
+      .end(function(err, res) {
+        this.setState({
+          index: this.state.index + 1,
+          pokemon: res.body.name,
+          species: res.body.species,
+          types: res.body.types
+        })
+      }.bind(this))
+
   },
 
   getInitialState: function() {
@@ -45,11 +65,11 @@ var Pokemon = React.createClass({
   render: function() {
     return (
       <div>
+
         <img src={"http://pokeapi.co/media/img/" + this.state.index + ".png"} />
-        <p>Name: {this.state.pokemon}</p>
-        <p>Species: {this.state.species}</p>
-        <p>Type 1: {this.state.types[0].name}</p>
-        <p>Type 2: {this.state.types[1].name}</p>
+
+        <PokemonInfo pokemon={this.state.pokemon} species={this.state.species} type1={this.state.types[0].name} type2={this.state.types[1] ? this.state.types[1].name:"None"} />
+
         <button>prev</button>
         <button onClick={this.incrementCount}>next</button>
       </div>
